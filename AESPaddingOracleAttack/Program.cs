@@ -11,6 +11,9 @@ namespace AESPaddingOracleAttack
         {
             // plain text to encode
             string plain = "Hello World!";
+            Console.WriteLine("Tekst jawny: ");
+            Console.WriteLine(plain);
+            Console.WriteLine();
 
             // config AES parameters
             AesManaged aes = ConfigAes();
@@ -21,6 +24,12 @@ namespace AESPaddingOracleAttack
             // print encrypted text in console
             Console.WriteLine("Szyfrogram: ");
             Console.WriteLine(System.Text.Encoding.UTF8.GetString(encrypted));
+            Console.WriteLine();
+
+            // conduct cipher text decryption
+            string decrypted = Decrypt(encrypted, aes.Key, aes.IV);
+            Console.WriteLine("Odszyfrowany tekst: ");
+            Console.WriteLine(decrypted);
         }
 
         static AesManaged ConfigAes()
@@ -44,7 +53,7 @@ namespace AESPaddingOracleAttack
             // array to store encrypted text
             byte[] result;
 
-            // get the configuration given in the function call
+            // get the configuration given in the function call to ceate encryptor
             using (AesManaged aes = new AesManaged())
             {
                 ICryptoTransform encryptor = aes.CreateEncryptor(key, iv);
@@ -55,7 +64,7 @@ namespace AESPaddingOracleAttack
                     // create the crypto stream that is key fpr encrptiopn / decryption
                     using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                     {
-                        // write the data by stream writer to the crypto stream
+                        // write the data by the stream writer to the crypto stream
                         using (StreamWriter sw = new StreamWriter(cs))
                             sw.Write(plain);
                         // put the encrypted data to the result array
@@ -65,6 +74,32 @@ namespace AESPaddingOracleAttack
             }
 
             // return array of encrypted bytes
+            return result;
+        }
+
+        static string Decrypt(byte[] encrypted, byte[] key, byte[] iv)
+        {
+            string result = null;
+
+            // get the configuration given in the function call to ceate decryptor
+            using (AesManaged aes = new AesManaged())
+            {
+                ICryptoTransform decryptor = aes.CreateDecryptor(key, iv);
+
+                // create memory streem that will be sent to crypto stream
+                using (MemoryStream ms = new MemoryStream(encrypted))
+                {
+                    // create the crypto stream that is key fpr encrptiopn / decryption
+                    using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+                    {
+                        // read the data by the stream reader from the crypto stream
+                        using (StreamReader sr = new StreamReader(cs))
+                            result = sr.ReadToEnd();
+                    }
+                }
+            }
+
+            // return string with decrypted text
             return result;
         }
     }
