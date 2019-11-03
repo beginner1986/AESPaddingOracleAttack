@@ -12,7 +12,7 @@ namespace AESPaddingOracleAttack
         static void Main(string[] args)
         {
             // plain text to encode
-            string plain = "Hello World!";
+            string plain = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
             Console.WriteLine("Tekst jawny: ");
             Console.WriteLine(plain);
             Console.WriteLine();
@@ -32,11 +32,12 @@ namespace AESPaddingOracleAttack
 
             // conduct cipher text decryption
             string decrypted = Decrypt(encrypted, aes.Key, aes.IV);
-            Console.WriteLine("Odszyfrowany tekst: ");
+            Console.WriteLine("Tekst odszyfrowany algorytmem AES: ");
             Console.WriteLine(decrypted);
+            Console.WriteLine();
 
             /*
-            // *********** DEBUG ***********
+            // DEBUG: check if padding ecxeption occures
             // createing garbage data
             byte[] garbage = { 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 };
             IEnumerable<byte> testData = encrypted.Concat(garbage);
@@ -50,7 +51,6 @@ namespace AESPaddingOracleAttack
             {
                 Console.WriteLine(e.Message);
             }
-            // *********** /DEBUG ***********
             */
 
             // padding check function
@@ -76,7 +76,10 @@ namespace AESPaddingOracleAttack
             }
 
             // Oracle padding attack
-            Oracle oracle = new Oracle(CheckPadding, encrypted);
+            Oracle oracle = new Oracle(CheckPadding, encrypted, 16);
+            byte[] attackResult = oracle.Decrypt();
+            Console.WriteLine($"Tekst odczytany za pomocoą AES Oracle Padding Attack ({attackResult.Length} bajtów): ");
+            Console.WriteLine(System.Text.Encoding.UTF8.GetString(attackResult));
         }
 
         static AesManaged ConfigAes()
