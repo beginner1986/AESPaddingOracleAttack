@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace AESPaddingOracleAttack
 {
@@ -8,8 +11,13 @@ namespace AESPaddingOracleAttack
         private int blockSize = 16;
         private List<byte[]> blocks;
 
-        public Oracle(byte[] encrypted, int blockSize = 16)
+        // function delegate to check padding correctness
+        public delegate bool CheckPadding(byte[] encrypted);
+        private CheckPadding isCorrect;
+
+        public Oracle(CheckPadding isCorrect, byte[] encrypted, int blockSize = 16)
         {
+            this.isCorrect = isCorrect;
             this.blockSize = blockSize;
             blocks = getBlocks(encrypted);
         }

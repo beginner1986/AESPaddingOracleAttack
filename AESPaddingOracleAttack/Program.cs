@@ -32,6 +32,31 @@ namespace AESPaddingOracleAttack
             string decrypted = Decrypt(encrypted, aes.Key, aes.IV);
             Console.WriteLine("Odszyfrowany tekst: ");
             Console.WriteLine(decrypted);
+
+            // padding check function
+            bool CheckPadding(byte[] encrypted)
+            {
+                try
+                {
+                    // if there is no padding error return true - padding correct
+                    Decrypt(encrypted, aes.Key, aes.IV);
+                    return true;
+                }
+                catch (CryptographicException e)
+                {
+                    // if padding error occurs return false - padding incorrect
+                    if (e.Message.Contains("Padding") || e.Message.Contains("padding"))
+                    {
+                        return false;
+                    }
+
+                    // else return true - other exception occured
+                    return true;
+                }
+            }
+
+            // Oracle padding attack
+            Oracle oracle = new Oracle(CheckPadding, encrypted);
         }
 
         static AesManaged ConfigAes()
@@ -107,6 +132,6 @@ namespace AESPaddingOracleAttack
             return result;
         }
 
-
+        
     }
 }
