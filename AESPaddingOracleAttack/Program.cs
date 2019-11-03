@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using System.Linq;
+using System.Diagnostics;
 
 namespace AESPaddingOracleAttack
 {
@@ -12,13 +11,13 @@ namespace AESPaddingOracleAttack
         static void Main(string[] args)
         {
             // plain text to encode
-            string plain = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            string plain = "Lorem ipsum dolor"; /* sit amet, consectetur adipiscing elit.*/
             Console.WriteLine("Tekst jawny: ");
             Console.WriteLine(plain);
             Console.WriteLine();
 
             // config AES parameters
-            AesManaged aes = ConfigAes();
+            using AesManaged aes = ConfigAes();
 
             // conduct plain text encryption
             byte[] encrypted = Encrypt(plain, aes.Key, aes.IV);
@@ -76,26 +75,34 @@ namespace AESPaddingOracleAttack
             }
 
             // Oracle padding attack
+            // timer for performance testing
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
             Oracle oracle = new Oracle(CheckPadding, encrypted, 16);
             byte[] attackResult = oracle.Decrypt();
-            Console.WriteLine($"Tekst odczytany za pomocoą AES Oracle Padding Attack ({attackResult.Length} bajtów): ");
+            timer.Stop();
+
+            Console.WriteLine($"Tekst odczytany za pomocą AES Oracle Padding Attack ({attackResult.Length} bajtów): ");
             Console.WriteLine(System.Text.Encoding.UTF8.GetString(attackResult));
+            Console.WriteLine("Czaswykonania ataku: {0}s.", timer.Elapsed);
         }
 
         static AesManaged ConfigAes()
         {
-            AesManaged aes = new AesManaged();
+            AesManaged aes = new AesManaged
+            {
 
-            // initial vector (temporary hardcoded, in future random)
-            aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-            // key (temporary hardcoded, in future random)
-            aes.Key = Encoding.ASCII.GetBytes("1122334455667788");
-            // set padding to PCKS7
-            aes.Padding = PaddingMode.PKCS7;
-            // set cipher mode to CBC
-            aes.Mode = CipherMode.CBC;
-            // set block size tp 128 bits (16 bytes)
-            aes.BlockSize = 128;
+                // initial vector (temporary hardcoded, in future random)
+                IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                // key (temporary hardcoded, in future random)
+                Key = Encoding.ASCII.GetBytes("1122334455667788"),
+                // set padding to PCKS7
+                Padding = PaddingMode.PKCS7,
+                // set cipher mode to CBC
+                Mode = CipherMode.CBC,
+                // set block size tp 128 bits (16 bytes)
+                BlockSize = 128
+            };
 
             return aes;
         }

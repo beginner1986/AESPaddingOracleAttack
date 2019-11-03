@@ -1,26 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+
+/*
+// for DEBUG purpouse:
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
+*/
 
 namespace AESPaddingOracleAttack
 {
     class Oracle
     {
-        private int blockSize = 16;
-        private List<byte[]> blocks;
-
+        private readonly int blockSize = 16;
+        private readonly List<byte[]> blocks;
 
         // function delegate to check padding correctness
         public delegate bool CheckPadding(byte[] encrypted);
-        private CheckPadding isCorrect;
+        private readonly CheckPadding isCorrect;
 
         public Oracle(CheckPadding isCorrect, byte[] encrypted, int blockSize = 16)
         {
             this.isCorrect = isCorrect;
             this.blockSize = blockSize;
-            blocks = getBlocks(encrypted);
+            blocks = GetBlocks(encrypted);
 
             // DEBUG: check if bytes are read correctly
             // Console.WriteLine(System.Text.Encoding.UTF8.GetString(ListToArray(blocks)));
@@ -136,7 +138,7 @@ namespace AESPaddingOracleAttack
             return result;
         }
 
-        private List<byte[]> getBlocks(byte[] encrypted)
+        private List<byte[]> GetBlocks(byte[] encrypted)
         {
             // list of bloc-sized byte arrays - by default 16
             List<byte[]> result = new List<byte[]>();
