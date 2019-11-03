@@ -22,8 +22,10 @@ namespace AESPaddingOracleAttack
             byte[] encrypted = Encrypt(plain, aes.Key, aes.IV);
 
             // print encrypted text in console
-            Console.WriteLine("Szyfrogram: ");
+            Console.WriteLine("Szyfrogram w ASCII: ");
             Console.WriteLine(System.Text.Encoding.UTF8.GetString(encrypted));
+            Console.WriteLine("Szyfrogram w hex: ");
+            Console.WriteLine(BitConverter.ToString(encrypted).Replace("-", " "));
             Console.WriteLine();
 
             // conduct cipher text decryption
@@ -44,6 +46,8 @@ namespace AESPaddingOracleAttack
             aes.Padding = PaddingMode.PKCS7;
             // set cipher mode to CBC
             aes.Mode = CipherMode.CBC;
+            // set block size tp 128 bits (16 bytes)
+            aes.BlockSize = 128;
 
             return aes;
         }
@@ -102,5 +106,7 @@ namespace AESPaddingOracleAttack
             // return string with decrypted text
             return result;
         }
+
+
     }
 }
