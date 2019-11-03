@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using System.Linq;
 
 namespace AESPaddingOracleAttack
 {
@@ -32,6 +34,24 @@ namespace AESPaddingOracleAttack
             string decrypted = Decrypt(encrypted, aes.Key, aes.IV);
             Console.WriteLine("Odszyfrowany tekst: ");
             Console.WriteLine(decrypted);
+
+            /*
+            // *********** DEBUG ***********
+            // createing garbage data
+            byte[] garbage = { 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 };
+            IEnumerable<byte> testData = encrypted.Concat(garbage);
+
+            // check if padding error coours during decryption try
+            try
+            {
+                Decrypt(testData.ToArray(), aes.Key, aes.IV);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            // *********** /DEBUG ***********
+            */
 
             // padding check function
             bool CheckPadding(byte[] encrypted)
@@ -131,7 +151,5 @@ namespace AESPaddingOracleAttack
             // return string with decrypted text
             return result;
         }
-
-        
     }
 }
