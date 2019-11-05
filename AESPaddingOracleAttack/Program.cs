@@ -10,10 +10,12 @@ namespace AESPaddingOracleAttack
     {
         static void Main(string[] args)
         {
-            // plain text to encode
-            string plain = "Lorem ipsum dolor"; /* sit amet, consectetur adipiscing elit.*/
+            // get plain text from the console
+            Console.WriteLine("AES CBC padding oracle attack");
+            Console.WriteLine("Adam Emieljaniuk 2019");
+            Console.WriteLine();
             Console.WriteLine("Tekst jawny: ");
-            Console.WriteLine(plain);
+            string plain = Console.ReadLine();
             Console.WriteLine();
 
             // config AES parameters
@@ -25,15 +27,18 @@ namespace AESPaddingOracleAttack
             // print encrypted text in console
             Console.WriteLine("Szyfrogram w ASCII: ");
             Console.WriteLine(System.Text.Encoding.UTF8.GetString(encrypted));
+            Console.WriteLine();
             Console.WriteLine("Szyfrogram w hex: ");
             Console.WriteLine(BitConverter.ToString(encrypted).Replace("-", " "));
             Console.WriteLine();
 
-            // conduct cipher text decryption
+            /*
+            // cipher text decryption by AES
             string decrypted = Decrypt(encrypted, aes.Key, aes.IV);
             Console.WriteLine("Tekst odszyfrowany algorytmem AES: ");
             Console.WriteLine(decrypted);
             Console.WriteLine();
+            */
 
             /*
             // DEBUG: check if padding ecxeption occures
@@ -84,6 +89,7 @@ namespace AESPaddingOracleAttack
 
             Console.WriteLine($"Tekst odczytany za pomocą AES Oracle Padding Attack ({attackResult.Length} bajtów): ");
             Console.WriteLine(System.Text.Encoding.UTF8.GetString(attackResult));
+            Console.WriteLine();
             Console.WriteLine("Czaswykonania ataku: {0}s.", timer.Elapsed);
         }
 
